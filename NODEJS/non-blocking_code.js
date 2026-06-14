@@ -5,7 +5,7 @@ const getUserAsync = (userId,callback) =>{
     };
     setTimeout(()=>{
         callback(users[userId]);
-    }, 1000);
+    }, 5000);
 };  
 getUserAsync(1,(user)=> {
     console.log(user);

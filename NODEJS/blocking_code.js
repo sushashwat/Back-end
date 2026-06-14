@@ -8,3 +8,12 @@ const getUserSync = (userId) =>{
 
 const user = getUserSync(1)
 console.log(user);
+
+// REPL - Read Evaluate Print Loop 
+console.log(global);
+
+/**
+ * Global Object in Browsers -- window
+ * 
+ * Global Object in Node--- global  
+ */
