@@ -8,7 +8,7 @@ abc();
 
 /**
  * Common  JS modules --- module.exports, require
- * 
+ * synchronous, nonstrict
  * ES modules --- import , export , "type": "modules" 
- * 
+ * asynchronous, strict
  */
