@@ -65,3 +65,24 @@ app.post("/book",(req,res)=>{
     res.send(books);
 
 });
+
+// Updating any particular book by id 
+
+app.put("/book/:id",(req,res) =>{
+  const bookId =  req.params.id;
+
+  const book = books.find(book => book.id == bookId);
+
+  if(!book){
+    return res.status(404).json({message:"Book with this id doesnot exist"})
+  }
+
+  const keys = Object.keys(req.body);
+
+  keys.forEach(key => {
+    book[key] = req.body[key];
+  });
+
+  res.send(books);
+
+});
