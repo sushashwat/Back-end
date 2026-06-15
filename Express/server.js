@@ -6,6 +6,8 @@ app.listen(5100 , ()=>{
     console.log("Server is running on port 5100");
 });
 
+app.use(express.json());
+
 const books = [
   {
     id: 1,
@@ -33,6 +35,33 @@ app.get("/", (req,res)=>{
     res.send("Learning API's");
 });
 
+// Fetching Books Data
 app.get("/books", (req,res)=>{
     res.send(books);
+});
+
+app.post("/book",(req,res)=>{
+    const{ id,
+    title,
+    author,
+    genre,
+    price,
+    publishedYear,
+    available,
+    image } = req.body;
+
+    const newBook = {
+      id: id,
+      title: title,
+      author: author,
+      genre: genre,
+      price: price,
+      publishedYear: publishedYear,
+      available: available,
+      image: image
+    };
+
+    books.push(newBook);
+    res.send(books);
+
 });
