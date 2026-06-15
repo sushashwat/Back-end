@@ -86,3 +86,19 @@ app.put("/book/:id",(req,res) =>{
   res.send(books);
 
 });
+
+// Delete any Particular Book 
+app.delete("/book/:id", (req,res)=>{
+  const bookId = req.params.id;
+
+  const book = books.find(book => book.id == bookId);
+
+  if(!book){
+    return res.status(404).json({message: "Book Not Found"});
+  }
+
+  const filteredBooks=books.filter((book) => book.id !=bookId);
+
+  res.send(filteredBooks);
+});
+
