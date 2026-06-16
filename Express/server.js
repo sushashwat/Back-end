@@ -8,6 +8,16 @@ app.listen(5100 , ()=>{
 
 app.use(express.json());
 
+
+app.use((req,res,next)=>{
+  console.log(req.method);
+  next();
+}, (req,res,next) => {
+  console.log("coming to next middleware");
+ }
+); 
+
+
 const books = [
   {
     id: 1,
