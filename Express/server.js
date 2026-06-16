@@ -1,18 +1,43 @@
 import express from "express";
-
+import bodyParser from "body-parser";
 const app = new express();
+
+const router = express.Router();
+
 
 app.listen(5100 , ()=>{
     console.log("Server is running on port 5100");
 });
 
-app.use(express.json());
+app.use("/", router);
 
+app.use(express.json());
+app.use(bodyParser.json());
+
+router.use((req,res, next)=>{
+  console.log("Request", req.method)
+  next();
+});
+
+router.get("/user", (req,res) =>{
+  console.log("User path on router instance");
+  res.send("Hello");
+});
+
+function logger(req,res,next){
+  console.log("Logging Request");
+  next();
+}
+
+router.get("/user/:id", logger, (req,res)=>{
+  console.log("User With Some id");
+  res.send("userid")
+});
 
 app.use((req,res,next)=>{
   console.log(req.method);
   next();
-}, (req,res,next) => {
+}, (req,res,next) => {  
   console.log("coming to next middleware");
  }
 ); 
@@ -112,3 +137,8 @@ app.delete("/book/:id", (req,res)=>{
   res.send(filteredBooks);
 });
 
+// Built-In Middlewares
+// express.static, express.urlencoded
+
+// Third-Party Middlewares
+// bodyparser
