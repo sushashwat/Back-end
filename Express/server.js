@@ -1,18 +1,31 @@
 import express from "express";
 import bodyParser from "body-parser";
-const app = new express();
+import jwt from "jsonwebtoken";
+const app =  express();
+
+app.use(express.json());
+app.use(bodyParser.json());
+
+
+app.use((req,res,next)=>{
+  console.log(req.method);
+  next();
+}, (req,res,next) => {  
+  console.log("coming to next middleware");
+  next();
+
+ }
+); 
 
 const router = express.Router();
+app.use("/", router);
+
 
 
 app.listen(5100 , ()=>{
     console.log("Server is running on port 5100");
 });
 
-app.use("/", router);
-
-app.use(express.json());
-app.use(bodyParser.json());
 
 router.use((req,res, next)=>{
   console.log("Request", req.method)
@@ -34,13 +47,6 @@ router.get("/user/:id", logger, (req,res)=>{
   res.send("userid")
 });
 
-app.use((req,res,next)=>{
-  console.log(req.method);
-  next();
-}, (req,res,next) => {  
-  console.log("coming to next middleware");
- }
-); 
 
 
 const books = [
@@ -71,11 +77,11 @@ app.get("/", (req,res)=>{
 });
 
 // Fetching Books Data
-app.get("/books", (req,res)=>{
+app.get("/books", authenticateUser, (req,res)=>{
     res.send(books);
 });
 
-app.post("/book",(req,res)=>{
+app.post("/books",(req,res)=>{
     const{ id,
     title,
     author,
@@ -142,3 +148,42 @@ app.delete("/book/:id", (req,res)=>{
 
 // Third-Party Middlewares
 // bodyparser
+
+
+router.post("/login",(req,res)=>{
+  console.log(req.body);
+    const user = {
+      username: req.body.username};
+
+    const accessToken= jwt.sign({user:user}, "secretKey",
+       {
+        expiresIn: "5m"
+       });
+    res.send({token: accessToken});
+});
+
+function authenticateUser(req, res, next) {
+  console.log("=== MIDDLEWARE TRIGGERED ==="); // Log 1
+  
+  const authHeader = req.headers['authorization'];
+  console.log("Auth Header Received:", authHeader); // Log 2
+
+  const token = authHeader && authHeader.split(" ")[1];
+  console.log("Extracted Token:", token); // Log 3
+
+  if (!token) {
+    console.log("No token found! Sending 401..."); // Log 4
+    return res.status(401).json({ message: "Token missing" });
+  }
+
+  jwt.verify(token, "secretKey", (err, user) => {
+    if (err) {
+      console.log("Token verification failed! Sending 403..."); // Log 5
+      return res.status(403).json({ message: "Invalid JWT token" });
+    }
+    
+    console.log("Token completely valid! Moving to route..."); // Log 6
+    req.user = user; 
+    next();
+  });
+}             
