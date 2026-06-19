@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
+const express = require("express")
+const app = express()
 const User = require("./User")
 mongoose.connect("mongodb://localhost:27017");
+
+const jwt = require("jsonwebtoken");
+app.use(express.json());
+
+app.listen(5100, () => {
+    console.log("Server is running on port 5100");
+});
 
 const db = mongoose.connection;
 
@@ -48,3 +57,9 @@ User.create({
 }).then((user4) => {
     console.log(user4);
 });
+
+app.post("/login",(req,res)=>{
+    const user = req.body.username;
+    const accessToken= jwt.sign(user, "secretKey");
+    res.send({token: accessToken});
+})
